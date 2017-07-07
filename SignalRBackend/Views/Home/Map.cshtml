@@ -1,0 +1,152 @@
+﻿<script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+<script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.signalR-1.1.4.min.js")" type="text/javascript"></script>
+<script type="text/javascript" src="@Url.Content("~/signalr/hubs")"></script>
+
+<style type="text/css">
+
+	#legend 
+	{
+		background-color: #3C5A76; 		
+		border: 2px solid #CCCCCC; 
+		color: #EEEEEE; 
+		font-weight: bold;
+		position: absolute; 
+		right: 50px; 
+		top: 50px; 		
+		padding: 15px;
+	}
+
+</style>
+
+<div id='mapDiv'></div>
+
+
+<div id="legend">
+	<label for="userCount">users: </label>
+	<span id="userCount">0</span>
+</div>
+
+
+<script type="text/javascript">
+
+    var map = null;	    
+    	
+	$(function () 
+	{
+	    // Create the connection to our hub.
+	    var mapHub = $.connection.mapHub;
+
+	    String.prototype.startsWith = function (str)
+	    { return (this.match("^" + str) == str) }
+
+	    // Add a new client to the map.
+        // Method invoked from server.
+	    mapHub.client.addMapClient = function (client) 
+	    {
+	        // Mark pushpins as W for Web & P for Phone.
+	        if (client.ClientId != 'W')
+	        {
+	            if (client.ClientId.startsWith('1'))
+	                client.ClientId = 'P';
+	            else
+	                client.ClientId = 'T';
+	        }	            
+
+	        var pins = getPushPins();
+	        addClient(client);
+	        centerMap();
+	        $("#userCount").html(pins.length + 1)
+	    };
+
+	    // Remove a client from the map.
+	    // Method invoked from server
+	    mapHub.client.removeMapClient = function (client)
+	    {
+	        for (var i = map.entities.getLength() - 1; i >= 0; i--) {
+	            var pushpin = map.entities.get(i);
+	            if (pushpin instanceof Microsoft.Maps.Pushpin) {
+	                if (pushpin.getLocation().latitude == client.ClientLocation.Latitude && pushpin.getLocation().longitude == client.ClientLocation.Longitude) {
+	                    map.entities.removeAt(i);
+	                    var pins = getPushPins();
+	                    $("#userCount").html(pins.length)
+	                }
+	            }
+	        }
+	    };
+
+	    // Start the hub.
+	    $.connection.hub.start(function () 
+	    {
+	        // Get the current location from the browser.
+	        navigator.geolocation.getCurrentPosition(function (position) 
+	        {
+	            // Create the map element on the page.
+	            mappit(position);
+
+	            // Notify the server a new user has joined the party.
+	            var coords = position.coords;
+	            var message = { 'ClientID': 'W', 'ClientLocation': { latitude: coords.latitude, longitude: coords.longitude} };
+	            mapHub.server.showClientOnMap(message);
+	        });
+	    });
+	});
+
+	
+	function addClient(client) 
+	{		
+	    var location = new Microsoft.Maps.Location(client.ClientLocation.Latitude, client.ClientLocation.Longitude);
+	    var pushpin = new Microsoft.Maps.Pushpin(location, { text: client.ClientId });
+	    map.entities.push(pushpin);
+
+	    map.setView({
+	        center: new Microsoft.Maps.Location(client.ClientLocation.Latitude, client.ClientLocation.Longitude),
+	        zoom: 1
+	    });
+	} 
+
+	function mappit(position) 
+	{		
+	    var mapOptions = 
+            {
+                credentials: "AoPiRMv2iHv5xhyYWjaZIWpDTvfs6gUUJqze65ygFxIX7P5qqcx2hd6ck7xzQAgF",
+                center: new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude)
+            }
+	    map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);				
+	} 	
+
+	function centerMap() 
+	{
+	    var pins = getPushPins();
+
+	    var locations = [];		
+	    for (var i = pins.length-1; i>=0; i--) 
+	        locations.push(pins[i].getLocation());
+
+	    if (locations.length == 1) 
+	    {
+	        map.setView({
+	            zoom: 15
+	        });
+	    } 
+	    else 
+	    {
+	        map.setView({
+	            bounds: Microsoft.Maps.LocationRect.fromLocations(locations)
+	        });
+	    } 
+	}
+
+	function getPushPins() 
+	{
+	    var pins = [];
+	    for (var i = map.entities.getLength() - 1; i >= 0; i--) {
+	        var pushpin = map.entities.get(i);
+	        if (pushpin instanceof Microsoft.Maps.Pushpin) {
+	            pins.push(pushpin);		
+	        } 
+	    } 
+	    return pins;
+	}
+	
+</script>

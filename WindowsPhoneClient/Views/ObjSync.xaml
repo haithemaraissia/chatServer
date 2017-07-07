@@ -1,0 +1,53 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="WindowsPhoneClient.Views.ObjSync"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="False">
+
+    
+    <Grid x:Name="LayoutRoot" Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <TextBlock x:Name="ApplicationTitle" Text="SIGNALR HELPER" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock x:Name="PageTitle" Text="object sync" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+        </StackPanel>
+
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="20,20,0,0">
+                <TextBlock Text="Custom Object Attributes!" FontSize="28"/>
+                <StackPanel Orientation="Horizontal" Margin="0,30,0,40">
+                    <TextBlock Text="Property 1:" FontSize="36" Foreground="{StaticResource PhoneAccentBrush}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="prop1Txt" Margin="20,0,0,0" Width="200" Text="Hello World!" MaxLength="10" Style="{StaticResource MainTextBoxStyle}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,40">
+                    <TextBlock Text="Property 2:" FontSize="36" Foreground="{StaticResource PhoneAccentBrush}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="prop2Txt" Margin="20,0,0,0" Width="200" Text="0" MaxLength="3" InputScope="Number" Style="{StaticResource MainTextBoxStyle}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,40">
+                    <TextBlock Text="Property 3:" FontSize="36" Foreground="{StaticResource PhoneAccentBrush}" VerticalAlignment="Center"/>
+                    <CheckBox x:Name="prop3Chk" Margin="20,0,0,0" Style="{StaticResource MainCheckBoxStyle}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+            <shell:ApplicationBarIconButton x:Name="syncBtn" IconUri="\Assets\Sync.png" Text="sync frm ph" Click="syncBtn_Click" />
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+
+</phone:PhoneApplicationPage>

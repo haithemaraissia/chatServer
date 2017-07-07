@@ -1,0 +1,43 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="WindowsPhoneClient.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    shell:SystemTray.IsVisible="False">
+
+    
+    <Grid x:Name="LayoutRoot" Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>       
+
+       
+        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
+            <TextBlock x:Name="ApplicationTitle" Text="WINDOWS PHONE DEMO" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock x:Name="PageTitle" Text="SignalR Helper" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+        </StackPanel>
+
+        
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+            <StackPanel Orientation="Vertical" Margin="10, -15,10,10" HorizontalAlignment="Center">
+                <Image Source="\Assets\WPSignalRHelper.png" />
+                <Button x:Name="mapBtn" Content="Map" Margin="0,10,0,0" Click="mapBtn_Click"/>
+                <Button x:Name="chatBtn" Content="Chat" Margin="0,10,0,0" Click="chatBtn_Click"/>
+                <Button x:Name="gameBtn" Content="Game Scores" Margin="0,10,0,0" Click="gameBtn_Click"/>
+                <Button x:Name="objBtn" Content="Object Sync" Margin="0,10,0,0" Click="objBtn_Click"/>
+            </StackPanel>
+        </Grid>
+
+      
+    </Grid>
+
+</phone:PhoneApplicationPage>

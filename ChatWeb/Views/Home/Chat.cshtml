@@ -1,0 +1,90 @@
+﻿@*<script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.signalR-1.1.4.min.js")" type="text/javascript"></script>
+<script type="text/javascript" src="@Url.Content("~/signalr/hubs")"></script>*@
+
+
+
+<div id='container'>
+    <br /><br />    
+    <div id='chat'>
+        <b>Chatroom:</b>
+        <br /><br />
+        <input type="text" id="message" maxlength="100" style="width: 200px;" />
+        <br /><br />
+        <input type="button" id="broadcast" value="Broadcast" />
+        <input type="button" id="clear" value="Clear" />
+        <br /><br />
+        <ul id="chatdialog"></ul>        
+    </div>   
+</div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+<script src="http://www.codeproject.com/signalr/hubs"></script>
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+
+
+            ChatServerUrl = "http://localhost:58416/";  
+            var ChatUrl = ChatServerUrl + "signalr";  
+            //This will hold the connection to the signalr hub   
+            SignalrConnection = $.hubConnection(ChatUrl, {  
+                useDefaultPath: false  
+            });  
+            ChatProxy = SignalrConnection.createHubProxy('ChatHub');  
+            //connecting the client to the signalr hub   
+            SignalrConnection.start().done(function() {
+                    alert("Connected to Signalr Server");
+                })
+                .fail(function() {
+                    alert("failed in connecting to the signalr server");
+                }); 
+  
+
+
+
+
+            // Create the connection to our SignalR-powered Chat Hub on the server.
+            //var signalRChatHub = $.connection("http://localhost:53478/Home/Chat");
+            // var signalRChatHub = $.connection("/chat");
+
+            // var connection = $.hubConnection();
+
+            //  var signalRChatHub = connection.createHubProxy('http://localhost:53478/Home/Chat');
+            //Set the hubs URL for the connection
+            $.connection.hub.url = "http://localhost:53478/Home/Chat";
+
+            // Declare a proxy to reference the hub.
+            var signalRChatHub = $.connection.ChatHub;
+
+
+            // Add chat messages from server to dialog.
+            // Method invoked from server.
+            signalRChatHub.client.addChatMessage = function(message) {
+                $('#chatdialog').append('<li>' + message + '</li>');
+            };
+
+            // Click event-handler for broadcasting chat messages.
+            $('#broadcast').click(function() {
+                // Call Server method.
+                signalRChatHub.server.pushChatMessageToClients($('#message').val());
+
+                $('#message').val("");
+            });
+
+            // Start the SignalR Hub.
+            $.connection.hub.start(function() {
+                // Do stuff here, if needed.         
+            });
+
+            // Click event-handler for clearing chat messages.
+            $('#clear').click(function() {
+                $('ul li').remove();
+            });
+        });
+
+    </script>
+
+}

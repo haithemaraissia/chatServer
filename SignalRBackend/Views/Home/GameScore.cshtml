@@ -1,0 +1,67 @@
+﻿<script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.signalR-1.1.4.min.js")" type="text/javascript"></script>
+<script type="text/javascript" src="@Url.Content("~/signalr/hubs")"></script>
+
+<div id='container'>
+    <div id='gamescore'>
+        <b>Live GameScores:</b>
+        <br /><br />
+        The assumption here is that the SignalR powered back-end server has the latest Game Scores accessible, through whatever technique/interface needed. The point is that the game scores below gets instantly updated on clients connected to our SignalR Hub. Same technique works for Stock-Tickers or other real-time information bits.
+        <br /><br />
+        <font color="red"><b>Team A:</b></font> &nbsp;&nbsp;
+        <input type="text" id="teamAScore" maxlength="3" value="0" onkeypress="NumericOnly();" />
+        <br /><br />
+        <font color="red"><b>Team B:</b></font> &nbsp;&nbsp;
+        <input type="text" id="teamBScore" maxlength="3" value="0" onkeypress="NumericOnly();" />
+        <br /><br />               
+    </div>   
+</div>
+
+<script type="text/javascript">    
+
+    function NumericOnly() 
+    {
+        var key = window.event.keyCode;
+
+        if ((key > 47 && key < 58))
+            return;
+        else
+            window.event.returnValue = null;
+    }
+
+    $(function () 
+    {
+        // Create the connection to our SignalR GameScore Hub.
+        var signalRGameScoreHub = $.connection.gameScoreHub;
+
+        // Change event-handler for the Game Score textboxes.
+        $('#teamAScore').change(function () 
+        {
+            // Call Server method.            
+            var scores = { 'TeamAScore': $('#teamAScore').val(), 'TeamBScore': $('#teamBScore').val() };
+            signalRGameScoreHub.server.pushScoresToClients(scores);
+        });
+
+        $('#teamBScore').change(function () 
+        {
+            // Call Server method.
+            var scores = { 'TeamAScore': $('#teamAScore').val(), 'TeamBScore': $('#teamBScore').val() };
+            signalRGameScoreHub.server.pushScoresToClients(scores);
+        });
+
+        // Update scores coming down from server.
+        // Method invoked from server.
+        signalRGameScoreHub.client.pushScores = function (teamAScore, teamBScore)
+        {
+            $('#teamAScore').val(teamAScore);
+            $('#teamBScore').val(teamBScore);
+        };
+
+        // Start the SignalR Hub.
+        $.connection.hub.start(function () 
+        {
+            // Do stuff here, if needed.         
+        });
+    });
+
+</script>

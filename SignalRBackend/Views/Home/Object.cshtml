@@ -1,0 +1,103 @@
+﻿<script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.signalR-1.1.4.min.js")" type="text/javascript"></script>
+<script type="text/javascript" src="@Url.Content("~/signalr/hubs")"></script>
+
+<div id='container'>
+    <div id='gamescore'>
+        <b>Custom Object in Sync:</b>
+        <br /><br />
+        Maintain a custom object in sync between connected clients through SignalR .. JSon Serialization/Deserialization comes free!
+        <br /><br />
+        <font color="red"><b>Property 1:</b></font> &nbsp;&nbsp;
+        <input type="text" id="prop1Txt" maxlength="10" value="Hello World!" />
+        <br /><br />
+        <font color="red"><b>Property 2:</b></font> &nbsp;&nbsp;
+        <input type="text" id="prop2Txt" maxlength="3" value="0" onkeypress="NumericOnly();" />
+        <br /><br />               
+        <font color="red"><b>Property 3:</b></font> &nbsp;&nbsp;
+        <input type="checkbox" id="prop3Chk" />
+        <br /><br />               
+    </div>   
+</div>
+
+<script type="text/javascript">
+
+    function NumericOnly() 
+    {
+        var key = window.event.keyCode;
+
+        if ((key > 47 && key < 58))
+            return;
+        else
+            window.event.returnValue = null;
+    }
+
+    $(function () 
+    {
+        // Create the connection to our SignalR Object Hub.
+        var signalRObjectHub = $.connection.objectSyncHub;
+
+        // Change event-handlers for Object properties.
+        $('#prop1Txt').change(function () 
+        {
+            var myJsonObj =
+            {
+                "Property1": $('#prop1Txt').val(),
+                "Property2": $('#prop2Txt').val(),
+                "Property3": $('#prop3Chk').is(':checked')
+            };
+
+            // Call Server method.
+            signalRObjectHub.server.syncCustomObjectWithClients(myJsonObj);
+        });
+
+        $('#prop2Txt').change(function () 
+        {
+            var myJsonObj =
+            {
+                "Property1": $('#prop1Txt').val(),
+                "Property2": $('#prop2Txt').val(),
+                "Property3": $('#prop3Chk').is(':checked')
+            };
+
+            // Call Server method.
+            signalRObjectHub.server.syncCustomObjectWithClients(myJsonObj);
+        });
+
+        $('#prop3Chk').click(function () 
+        {
+            var myJsonObj =
+            {
+                "Property1": $('#prop1Txt').val(),
+                "Property2": $('#prop2Txt').val(),
+                "Property3": $('#prop3Chk').is(':checked')
+            };
+
+            // Call Server method.
+            signalRObjectHub.server.syncCustomObjectWithClients(myJsonObj);
+        });
+
+        // Update local object if indicated by SignalR server.
+        signalRObjectHub.client.syncObject = function (customObj)
+        {
+            $('#prop1Txt').val(customObj.Property1);
+            $('#prop2Txt').val(customObj.Property2);
+
+            if (customObj.Property3) 
+            {
+                $('#prop3Chk').attr('checked', 'checked')
+            }
+            else 
+            {
+                $('#prop3Chk').removeAttr('checked')
+            }
+        };
+
+        // Start the SignalR Hub.
+        $.connection.hub.start(function () 
+        {
+            // Do stuff here, if needed.         
+        });
+    });
+
+</script>
