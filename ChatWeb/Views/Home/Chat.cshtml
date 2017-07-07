@@ -19,7 +19,7 @@
 </div>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
-<script src="http://www.codeproject.com/signalr/hubs"></script>
+<script src="http://localhost:53478/signalr/hubs"></script>
 @section Scripts
 {
     <script type="text/javascript">
@@ -57,7 +57,7 @@
             $.connection.hub.url = "http://localhost:53478/Home/Chat";
 
             // Declare a proxy to reference the hub.
-            var signalRChatHub = $.connection.ChatHub;
+            var signalRChatHub = $.connection.chatHub;
 
 
             // Add chat messages from server to dialog.
